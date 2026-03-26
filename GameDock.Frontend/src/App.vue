@@ -1,11 +1,21 @@
-<script setup></script>
+<script setup>
+import { ref, onMounted } from 'vue'
+
+const message = ref('Loading...')
+
+onMounted(async () => {
+  try {
+    const response = await fetch('http://localhost:5177/api/test')
+    const data = await response.json()
+    message.value = `${data.message} - ${data.time}`
+  } catch (err) {
+    message.value = 'Error connecting to backend'
+    console.error(err)
+  }
+})
+</script>
 
 <template>
-  <h1>You did it!</h1>
-  <p>
-    Visit <a href="https://vuejs.org/" target="_blank" rel="noopener">vuejs.org</a> to read the
-    documentation
-  </p>
+  <h1>GameDock Test</h1>
+  <p>{{ message }}</p>
 </template>
-
-<style scoped></style>
