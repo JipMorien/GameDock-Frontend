@@ -7,6 +7,8 @@ const emit = defineEmits<{
   switchToRegister: []
 }>()
 
+const { login } = useAuth()
+
 const schema = z.object({
   email: z.string().email('Invalid email address'),
   password: z.string().min(6, 'Password must be at least 6 characters'),
@@ -20,16 +22,20 @@ const state = reactive({
 })
 
 const loading = ref(false)
+const errorMessage = ref('')
 
 async function onSubmit(event: FormSubmitEvent<Schema>) {
   loading.value = true
-  
-  // Simulate API call to your .NET backend
-  // In production, this would be: await $fetch('/api/auth/login', { method: 'POST', body: event.data })
-  await new Promise(resolve => setTimeout(resolve, 1000))
-  
-  loading.value = false
-  emit('success')
+  errorMessage.value = ''
+
+  try {
+    await login(event.data.email, event.data.password)
+    emit('success')
+  } catch {
+    errorMessage.value = 'Login failed. Check your email and password.'
+  } finally {
+    loading.value = false
+  }
 }
 </script>
 
@@ -37,23 +43,27 @@ async function onSubmit(event: FormSubmitEvent<Schema>) {
   <UForm :schema="schema" :state="state" class="space-y-4" @submit="onSubmit">
     <UFormField name="email" label="Email">
       <UInput
-        v-model="state.email"
-        type="email"
-        placeholder="player@gamedock.com"
-        icon="i-lucide-mail"
-        class="font-retro"
+          v-model="state.email"
+          type="email"
+          placeholder="player@gamedock.com"
+          icon="i-lucide-mail"
+          class="font-retro"
       />
     </UFormField>
 
     <UFormField name="password" label="Password">
       <UInput
-        v-model="state.password"
-        type="password"
-        placeholder="Enter your password"
-        icon="i-lucide-lock"
-        class="font-retro"
+          v-model="state.password"
+          type="password"
+          placeholder="Enter your password"
+          icon="i-lucide-lock"
+          class="font-retro"
       />
     </UFormField>
+
+    <p v-if="errorMessage" class="text-red-500 font-retro text-sm">
+      {{ errorMessage }}
+    </p>
 
     <div class="flex items-center justify-between">
       <UCheckbox label="Remember me" class="font-retro text-sm" />
@@ -63,10 +73,10 @@ async function onSubmit(event: FormSubmitEvent<Schema>) {
     </div>
 
     <UButton
-      type="submit"
-      block
-      :loading="loading"
-      class="font-pixel text-xs bg-[var(--arcade-neon-cyan)] hover:bg-[var(--arcade-neon-cyan)]/80 text-black arcade-btn"
+        type="submit"
+        block
+        :loading="loading"
+        class="font-pixel text-xs bg-[var(--arcade-neon-cyan)] hover:bg-[var(--arcade-neon-cyan)]/80 text-black arcade-btn"
     >
       INSERT COIN TO PLAY
     </UButton>
