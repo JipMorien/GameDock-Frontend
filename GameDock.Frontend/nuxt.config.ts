@@ -1,26 +1,21 @@
 export default defineNuxtConfig({
-  compatibilityDate: '2026-05-07',
-
   devtools: { enabled: true },
-
   modules: ['@nuxt/ui'],
-
   css: ['./app/assets/css/main.css'],
 
   runtimeConfig: {
     public: {
-      apiBase: 'http://localhost:5268/api'
+      apiBase: 'http://localhost:5000/api'
     }
   },
 
   app: {
     head: {
-      title: 'GameDock',
+      title: 'Pixel Arena - Retro Gaming',
       meta: [
         {
           name: 'description',
-          content:
-              'Play classic arcade games with a modern twist. Compete with friends, climb the leaderboards, and relive the golden age of gaming.'
+          content: 'Play classic arcade games with a modern twist. Compete with friends, climb the leaderboards, and relive the golden age of gaming.'
         }
       ],
       link: [

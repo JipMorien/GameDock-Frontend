@@ -6,10 +6,20 @@ export interface Achievement {
     unlocked: boolean
 }
 
+export interface BackendProfile {
+    profileId: number
+    userName: string
+    userId: number
+    bio: string
+    avatarId: number
+    createdAt: string
+}
+
 export interface UserProfile {
     username: string
     email: string
     avatar: string
+    bio: string
     level: number
     xp: number
     xpToNextLevel: number

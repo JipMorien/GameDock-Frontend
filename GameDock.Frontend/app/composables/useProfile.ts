@@ -2,26 +2,30 @@ interface BackendProfile {
     profileId: number
     userName: string
     userId: number
+    bio: string
+    avatarId: number
+    createdAt: string
 }
 
 export const useProfile = async () => {
     const api = useApi()
 
-    const { data, pending, error } = await useAsyncData<BackendProfile[]>('profiles', () =>
-        api('/profiles')
+    const { data, pending, error } = await useAsyncData<BackendProfile>('profile', () =>
+        api('/profiles/me')
     )
 
     const user = computed(() => {
-        const profile = data.value?.[0]
+        const profile = data.value
 
         return {
             username: profile?.userName ?? 'Unknown Player',
             email: 'player@arcade.com',
-            avatar: '/placeholder-user.jpg',
+            avatar: `/avatars/avatar-${profile?.avatarId ?? 1}.png`,
+            bio: profile?.bio ?? '',
             level: 23,
             xp: 7850,
             xpToNextLevel: 10000,
-            memberSince: 'March 2024',
+            memberSince: profile?.createdAt ?? '',
             totalGamesPlayed: 342,
             totalWins: 186,
             winRate: 54.4,
