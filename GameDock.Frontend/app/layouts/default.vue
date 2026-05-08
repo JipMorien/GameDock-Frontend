@@ -1,10 +1,25 @@
 <script setup lang="ts">
 import type { NavigationMenuItem } from '@nuxt/ui'
 
-const colorMode = useColorMode()
+interface BackendProfile {
+  profileId: number
+  userName: string
+  userId: number
+  bio: string
+  avatarId: number
+  createdAt: string
+}
 
-onMounted(() => {
-  colorMode.preference = 'dark'
+const colorMode = useColorMode()
+const api = useApi()
+
+const isLoggedIn = ref(false)
+const loginModalOpen = ref(false)
+const registerModalOpen = ref(false)
+const profile = ref<BackendProfile | null>(null)
+
+const avatarUrl = computed(() => {
+  return `/avatars/avatar-${profile.value?.avatarId ?? 1}.png`
 })
 
 const navItems = computed<NavigationMenuItem[]>(() => [
@@ -16,9 +31,45 @@ const navItems = computed<NavigationMenuItem[]>(() => [
   { label: 'About', to: '/about', icon: 'i-lucide-info' },
 ])
 
-const isLoggedIn = ref(false)
-const loginModalOpen = ref(false)
-const registerModalOpen = ref(false)
+async function loadProfile() {
+  if (!localStorage.getItem('token')) return
+
+  try {
+    profile.value = await api<BackendProfile>('/profiles/me')
+    isLoggedIn.value = true
+  } catch {
+    profile.value = null
+    isLoggedIn.value = false
+  }
+}
+
+async function handleAuthSuccess() {
+  isLoggedIn.value = true
+  loginModalOpen.value = false
+  registerModalOpen.value = false
+  await loadProfile()
+}
+
+async function logout() {
+  localStorage.removeItem('token')
+  isLoggedIn.value = false
+  profile.value = null
+
+  await navigateTo('/')
+}
+
+onMounted(async () => {
+  colorMode.preference = 'dark'
+  isLoggedIn.value = !!localStorage.getItem('token')
+
+  await loadProfile()
+
+  window.addEventListener('profile-updated', loadProfile)
+})
+
+onBeforeUnmount(() => {
+  window.removeEventListener('profile-updated', loadProfile)
+})
 
 const userMenuItems = [
   [
@@ -26,7 +77,7 @@ const userMenuItems = [
     { label: 'Settings', icon: 'i-lucide-settings', to: '/settings' },
   ],
   [
-    { label: 'Sign out', icon: 'i-lucide-log-out', click: () => isLoggedIn.value = false },
+    { label: 'Sign out', icon: 'i-lucide-log-out', onSelect: logout },
   ],
 ]
 </script>
@@ -40,6 +91,7 @@ const userMenuItems = [
             <UIcon name="i-lucide-joystick" class="size-8 text-[var(--arcade-neon-pink)]" />
             <div class="absolute -inset-1 bg-[var(--arcade-neon-pink)]/20 blur-md rounded-full -z-10" />
           </div>
+
           <span class="font-pixel text-sm text-[var(--arcade-neon-cyan)] neon-text-cyan hidden sm:block">
             GAMEDOCK
           </span>
@@ -49,33 +101,36 @@ const userMenuItems = [
       <UNavigationMenu :items="navItems" class="hidden lg:flex" />
 
       <template #right>
-        <template v-if="isLoggedIn">
-          <UDropdownMenu :items="userMenuItems">
-            <UButton variant="ghost" class="p-0">
-              <UAvatar
-                  src="/placeholder-user.jpg"
-                  alt="Player Avatar"
-                  size="sm"
-                  class="ring-2 ring-[var(--arcade-neon-cyan)]"
-              />
-            </UButton>
-          </UDropdownMenu>
-        </template>
+        <ClientOnly>
+          <template v-if="isLoggedIn">
+            <UDropdownMenu :items="userMenuItems">
+              <UButton variant="ghost" class="p-0">
+                <UAvatar
+                    :src="avatarUrl"
+                    :alt="profile?.userName ?? 'Player Avatar'"
+                    size="sm"
+                    class="ring-2 ring-[var(--arcade-neon-cyan)]"
+                />
+              </UButton>
+            </UDropdownMenu>
+          </template>
 
-        <template v-else>
-          <UButton
-              label="Sign In"
-              color="neutral"
-              variant="ghost"
-              class="font-retro text-lg"
-              @click="loginModalOpen = true"
-          />
-          <UButton
-              label="Join"
-              class="font-retro text-lg bg-[var(--arcade-neon-pink)] hover:bg-[var(--arcade-neon-pink)]/80 text-white arcade-btn"
-              @click="registerModalOpen = true"
-          />
-        </template>
+          <template v-else>
+            <UButton
+                label="Sign In"
+                color="neutral"
+                variant="ghost"
+                class="font-retro text-lg"
+                @click="loginModalOpen = true"
+            />
+
+            <UButton
+                label="Join"
+                class="font-retro text-lg bg-[var(--arcade-neon-pink)] hover:bg-[var(--arcade-neon-pink)]/80 text-white arcade-btn"
+                @click="registerModalOpen = true"
+            />
+          </template>
+        </ClientOnly>
       </template>
 
       <template #body>
@@ -107,6 +162,7 @@ const userMenuItems = [
               to="https://github.com"
               target="_blank"
           />
+
           <UButton
               icon="i-simple-icons-discord"
               color="neutral"
@@ -125,7 +181,7 @@ const userMenuItems = [
     >
       <template #body>
         <LoginForm
-            @success="isLoggedIn = true; loginModalOpen = false"
+            @success="handleAuthSuccess"
             @switch-to-register="loginModalOpen = false; registerModalOpen = true"
         />
       </template>
@@ -138,7 +194,7 @@ const userMenuItems = [
     >
       <template #body>
         <RegisterForm
-            @success="isLoggedIn = true; registerModalOpen = false"
+            @success="handleAuthSuccess"
             @switch-to-login="registerModalOpen = false; loginModalOpen = true"
         />
       </template>
