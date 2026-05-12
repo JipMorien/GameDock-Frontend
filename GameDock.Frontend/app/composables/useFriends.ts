@@ -1,71 +1,78 @@
-import type { Friend, FriendRequest } from '~/types/friends'
+interface FriendRequest {
+    friendRequestId: number
+    senderUserId: number
+    receiverUserId: number
+    status: number
+    createdAt: string
+}
 
-export const useFriends = () => {
-    const searchQuery = ref('')
-    const activeTab = ref('friends')
+export const useFriends = async () => {
+    const api = useApi()
 
-    const friends = ref<Friend[]>([
-        { id: 1, username: 'RetroKing', status: 'online', lastSeen: 'Playing now', avatar: '/placeholder-user.jpg', level: 45 },
-        { id: 2, username: 'ArcadeQueen', status: 'online', lastSeen: 'In menu', avatar: '/placeholder-user.jpg', level: 38 },
-        { id: 3, username: 'PixelWarrior', status: 'away', lastSeen: '5 min ago', avatar: '/placeholder-user.jpg', level: 32 },
-        { id: 4, username: 'NeonNinja', status: 'offline', lastSeen: '2 hours ago', avatar: '/placeholder-user.jpg', level: 28 },
-        { id: 5, username: 'GameMaster', status: 'offline', lastSeen: 'Yesterday', avatar: '/placeholder-user.jpg', level: 41 },
-        { id: 6, username: 'VintageGamer', status: 'online', lastSeen: 'In lobby', avatar: '/placeholder-user.jpg', level: 22 },
-    ])
+    const { data: friends, pending: friendsPending, error: friendsError, refresh: refreshFriends } =
+        await useAsyncData<FriendRequest[]>('friends', () => api('/friends'))
 
-    const pendingRequests = ref<FriendRequest[]>([
-        { id: 7, username: 'CyberPunk', avatar: '/placeholder-user.jpg', level: 19 },
-        { id: 8, username: 'RetroBlaster', avatar: '/placeholder-user.jpg', level: 25 },
-    ])
+    const { data: incomingRequests, pending: incomingPending, error: incomingError, refresh: refreshIncoming } =
+        await useAsyncData<FriendRequest[]>('incoming-friend-requests', () => api('/friends/incoming'))
 
-    const filteredFriends = computed(() => {
-        return friends.value.filter(friend =>
-            friend.username.toLowerCase().includes(searchQuery.value.toLowerCase())
-        )
-    })
+    const { data: outgoingRequests, pending: outgoingPending, error: outgoingError, refresh: refreshOutgoing } =
+        await useAsyncData<FriendRequest[]>('outgoing-friend-requests', () => api('/friends/outgoing'))
 
-    const onlineFriends = computed(() => filteredFriends.value.filter(friend => friend.status === 'online'))
-    const offlineFriends = computed(() => filteredFriends.value.filter(friend => friend.status !== 'online'))
-
-    function getStatusColor(status: string) {
-        switch (status) {
-            case 'online':
-                return 'bg-green-500'
-            case 'away':
-                return 'bg-yellow-500'
-            default:
-                return 'bg-gray-500'
-        }
+    async function refreshAll() {
+        await refreshFriends()
+        await refreshIncoming()
+        await refreshOutgoing()
     }
 
-    function acceptRequest(id: number) {
-        const request = pendingRequests.value.find(request => request.id === id)
-
-        if (!request) return
-
-        friends.value.push({
-            ...request,
-            status: 'offline',
-            lastSeen: 'Just added',
+    async function sendFriendRequest(receiverUserId: number) {
+        await api(`/friends/request/${receiverUserId}`, {
+            method: 'POST',
         })
 
-        pendingRequests.value = pendingRequests.value.filter(request => request.id !== id)
+        await refreshAll()
     }
 
-    function declineRequest(id: number) {
-        pendingRequests.value = pendingRequests.value.filter(request => request.id !== id)
+    async function acceptFriendRequest(requestId: number) {
+        await api(`/friends/accept/${requestId}`, {
+            method: 'PUT',
+        })
+
+        await refreshAll()
+    }
+
+    async function rejectFriendRequest(requestId: number) {
+        await api(`/friends/reject/${requestId}`, {
+            method: 'PUT',
+        })
+
+        await refreshAll()
+    }
+
+    async function deleteFriendRequest(requestId: number) {
+        await api(`/friends/${requestId}`, {
+            method: 'DELETE',
+        })
+
+        await refreshAll()
     }
 
     return {
-        searchQuery,
-        activeTab,
         friends,
-        pendingRequests,
-        filteredFriends,
-        onlineFriends,
-        offlineFriends,
-        getStatusColor,
-        acceptRequest,
-        declineRequest,
+        incomingRequests,
+        outgoingRequests,
+
+        friendsPending,
+        incomingPending,
+        outgoingPending,
+
+        friendsError,
+        incomingError,
+        outgoingError,
+
+        refreshAll,
+        sendFriendRequest,
+        acceptFriendRequest,
+        rejectFriendRequest,
+        deleteFriendRequest,
     }
 }
