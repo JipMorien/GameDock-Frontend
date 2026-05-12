@@ -17,16 +17,30 @@ const {
   acceptFriendRequest,
   rejectFriendRequest,
   deleteFriendRequest,
-} = await useFriends()
+} = useFriends()
+
+const { user: authUser } = useAuth()
 
 const activeTab = ref('friends')
-const receiverUserId = ref<number | null>(null)
+const receiverUserName = ref('')
+
+function getOtherUserName(friend: any) {
+  return friend.senderUserId === authUser.value?.gameDockUserId
+      ? friend.receiverUserName
+      : friend.senderUserName
+}
+
+function getOtherUserId(friend: any) {
+  return friend.senderUserId === authUser.value?.gameDockUserId
+      ? friend.receiverUserId
+      : friend.senderUserId
+}
 
 async function onSendFriendRequest() {
-  if (!receiverUserId.value) return
+  if (!receiverUserName.value.trim()) return
 
-  await sendFriendRequest(receiverUserId.value)
-  receiverUserId.value = null
+  await sendFriendRequest(receiverUserName.value.trim())
+  receiverUserName.value = ''
 }
 </script>
 
@@ -37,6 +51,7 @@ async function onSendFriendRequest() {
         <h1 class="font-pixel text-2xl text-[var(--arcade-neon-pink)] neon-text-pink mb-2">
           FRIENDS
         </h1>
+
         <p class="font-retro text-xl text-muted">
           Connect with other players
         </p>
@@ -44,15 +59,16 @@ async function onSendFriendRequest() {
 
       <div class="game-container rounded-lg p-6 max-w-2xl mx-auto mb-8">
         <h2 class="font-pixel text-xs text-[var(--arcade-neon-cyan)] mb-4">
-          ADD FRIEND BY USER ID
+          ADD FRIEND BY USERNAME
         </h2>
 
         <div class="flex gap-3">
           <UInput
-              v-model.number="receiverUserId"
-              type="number"
-              placeholder="Enter user ID"
+              v-model="receiverUserName"
+              type="text"
+              placeholder="Enter username"
               class="flex-1 font-retro"
+              @keyup.enter="onSendFriendRequest"
           />
 
           <UButton
@@ -112,11 +128,15 @@ async function onSendFriendRequest() {
               class="game-container rounded-lg p-4 flex items-center justify-between"
           >
             <div>
-              <p class="font-retro text-lg text-white">
-                Friend connection #{{ friend.friendRequestId }}
-              </p>
+              <NuxtLink
+                  :to="`/${getOtherUserId(friend)}`"
+                  class="font-retro text-lg text-white hover:text-[var(--arcade-neon-cyan)] transition"
+              >
+                {{ getOtherUserName(friend) }}
+              </NuxtLink>
+
               <p class="font-retro text-sm text-muted">
-                Users: {{ friend.senderUserId }} ↔ {{ friend.receiverUserId }}
+                Friends since {{ friend.createdAt }}
               </p>
             </div>
 
@@ -134,7 +154,7 @@ async function onSendFriendRequest() {
             v-else
             icon="i-lucide-users"
             title="No friends yet"
-            description="Send a friend request to another player by user ID."
+            description="Send a friend request to another player by username."
             class="py-12"
         />
       </div>
@@ -155,9 +175,13 @@ async function onSendFriendRequest() {
               class="game-container rounded-lg p-4 flex items-center justify-between"
           >
             <div>
-              <p class="font-retro text-lg text-white">
-                Request from user #{{ request.senderUserId }}
-              </p>
+              <NuxtLink
+                  :to="`/profile/${request.senderUserId}`"
+                  class="font-retro text-lg text-white hover:text-[var(--arcade-neon-cyan)]"
+              >
+                Request from {{ request.senderUserName }}
+              </NuxtLink>
+
               <p class="font-retro text-sm text-muted">
                 Sent at {{ request.createdAt }}
               </p>
@@ -171,6 +195,7 @@ async function onSendFriendRequest() {
                   size="sm"
                   @click="acceptFriendRequest(request.friendRequestId)"
               />
+
               <UButton
                   icon="i-lucide-x"
                   color="error"
@@ -207,9 +232,13 @@ async function onSendFriendRequest() {
               class="game-container rounded-lg p-4 flex items-center justify-between"
           >
             <div>
-              <p class="font-retro text-lg text-white">
-                Request to user #{{ request.receiverUserId }}
-              </p>
+              <NuxtLink
+                  :to="`/profile/${request.receiverUserId}`"
+                  class="font-retro text-lg text-white hover:text-[var(--arcade-neon-cyan)]"
+              >
+                Request to {{ request.receiverUserName }}
+              </NuxtLink>
+
               <p class="font-retro text-sm text-muted">
                 Sent at {{ request.createdAt }}
               </p>

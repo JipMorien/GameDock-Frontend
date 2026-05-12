@@ -10,8 +10,11 @@ export interface Friend {
 }
 
 export interface FriendRequest {
-    id: number
-    username: string
-    avatar: string
-    level: number
+    friendRequestId: number
+    senderUserId: number
+    senderUserName: string
+    receiverUserId: number
+    receiverUserName: string
+    status: number | string
+    createdAt: string
 }

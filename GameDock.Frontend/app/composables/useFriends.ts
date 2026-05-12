@@ -1,32 +1,79 @@
 interface FriendRequest {
     friendRequestId: number
     senderUserId: number
+    senderUserName: string
     receiverUserId: number
-    status: number
+    receiverUserName: string
+    status: number | string
     createdAt: string
 }
 
-export const useFriends = async () => {
+export const useFriends = () => {
     const api = useApi()
 
-    const { data: friends, pending: friendsPending, error: friendsError, refresh: refreshFriends } =
-        await useAsyncData<FriendRequest[]>('friends', () => api('/friends'))
+    const friends = ref<FriendRequest[]>([])
+    const incomingRequests = ref<FriendRequest[]>([])
+    const outgoingRequests = ref<FriendRequest[]>([])
 
-    const { data: incomingRequests, pending: incomingPending, error: incomingError, refresh: refreshIncoming } =
-        await useAsyncData<FriendRequest[]>('incoming-friend-requests', () => api('/friends/incoming'))
+    const friendsPending = ref(false)
+    const incomingPending = ref(false)
+    const outgoingPending = ref(false)
 
-    const { data: outgoingRequests, pending: outgoingPending, error: outgoingError, refresh: refreshOutgoing } =
-        await useAsyncData<FriendRequest[]>('outgoing-friend-requests', () => api('/friends/outgoing'))
+    const friendsError = ref(false)
+    const incomingError = ref(false)
+    const outgoingError = ref(false)
 
-    async function refreshAll() {
-        await refreshFriends()
-        await refreshIncoming()
-        await refreshOutgoing()
+    async function loadFriends() {
+        friendsPending.value = true
+        friendsError.value = false
+
+        try {
+            friends.value = await api<FriendRequest[]>('/friends')
+        } catch {
+            friendsError.value = true
+        } finally {
+            friendsPending.value = false
+        }
     }
 
-    async function sendFriendRequest(receiverUserId: number) {
-        await api(`/friends/request/${receiverUserId}`, {
+    async function loadIncoming() {
+        incomingPending.value = true
+        incomingError.value = false
+
+        try {
+            incomingRequests.value = await api<FriendRequest[]>('/friends/incoming')
+        } catch {
+            incomingError.value = true
+        } finally {
+            incomingPending.value = false
+        }
+    }
+
+    async function loadOutgoing() {
+        outgoingPending.value = true
+        outgoingError.value = false
+
+        try {
+            outgoingRequests.value = await api<FriendRequest[]>('/friends/outgoing')
+        } catch {
+            outgoingError.value = true
+        } finally {
+            outgoingPending.value = false
+        }
+    }
+
+    async function refreshAll() {
+        await Promise.all([
+            loadFriends(),
+            loadIncoming(),
+            loadOutgoing(),
+        ])
+    }
+
+    async function sendFriendRequest(userName: string) {
+        await api('/friends/request', {
             method: 'POST',
+            body: { userName },
         })
 
         await refreshAll()
@@ -55,6 +102,8 @@ export const useFriends = async () => {
 
         await refreshAll()
     }
+
+    onMounted(refreshAll)
 
     return {
         friends,

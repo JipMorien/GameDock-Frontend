@@ -37,9 +37,12 @@ async function loadProfile() {
   try {
     profile.value = await api<BackendProfile>('/profiles/me')
     isLoggedIn.value = true
-  } catch {
+  } catch (error) {
+    console.error('LOAD PROFILE FAILED', error)
+
+    // tijdelijk NIET uitloggen
     profile.value = null
-    isLoggedIn.value = false
+    isLoggedIn.value = true
   }
 }
 
