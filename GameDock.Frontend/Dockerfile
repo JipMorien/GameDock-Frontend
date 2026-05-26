@@ -1,4 +1,4 @@
-﻿FROM node:20
+﻿FROM node:20 AS build
 
 WORKDIR /app
 
@@ -7,6 +7,14 @@ RUN npm install
 
 COPY . .
 
+RUN npm run build
+
+FROM node:20-alpine
+
+WORKDIR /app
+
+COPY --from=build /app ./
+
 EXPOSE 3000
 
-CMD ["npm", "run", "dev", "--", "--host", "0.0.0.0", "--port", "3000"]
+CMD ["npm", "run", "preview", "--", "--host", "0.0.0.0", "--port", "3000"]
