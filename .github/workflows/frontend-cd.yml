@@ -31,8 +31,8 @@ jobs:
       - name: Build and push image
         uses: docker/build-push-action@v6
         with:
-          context: .
-          file: ./Dockerfile
+          context: ./GameDock.Frontend
+          file: ./GameDock.Frontend/Dockerfile
           push: true
           tags: |
             ${{ env.IMAGE_NAME }}:latest
