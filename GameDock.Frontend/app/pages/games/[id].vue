@@ -11,7 +11,7 @@ const games = [
     title: 'A Blind Step',
     description:
         'A Blind Step is een horror puzzle game die speelbaar is via Unity WebGL.',
-    iframeUrl: '/games/a-blind-step/index.html',
+    iframeUrl: 'https://games.gamedoc.tech/a-blind-step/index.html',
     controls: [
       'Gebruik WASD of pijltjestoetsen om te bewegen.',
       'Gebruik spatie om te springen.',
