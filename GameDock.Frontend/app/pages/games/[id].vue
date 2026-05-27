@@ -7,11 +7,11 @@ const route = useRoute()
 
 const games = [
   {
-    slug: 'gamedock-runner',
-    title: 'GameDock Runner',
+    slug: 'a-blind-step',
+    title: 'A Blind Step',
     description:
-        'GameDock Runner is de eerste speelbare game binnen GameDock. De game draait als Unity WebGL build direct in de browser.',
-    iframeUrl: '/games/gamedock-runner/index.html',
+        'A Blind Step is een horror puzzle game die speelbaar is via Unity WebGL.',
+    iframeUrl: '/games/a-blind-step/index.html',
     controls: [
       'Gebruik WASD of pijltjestoetsen om te bewegen.',
       'Gebruik spatie om te springen.',
