@@ -23,7 +23,7 @@ const avatarUrl = computed(() => {
 })
 
 const navItems = computed<NavigationMenuItem[]>(() => [
-  { label: 'Play', to: '/', icon: 'i-lucide-gamepad-2' },
+  { label: 'Games', to: '/games', icon: 'i-lucide-joystick' },
   { label: 'Forum', to: '/forum', icon: 'i-lucide-message-square' },
   { label: 'Leaderboard', to: '/leaderboard', icon: 'i-lucide-trophy' },
   { label: 'Friends', to: '/friends', icon: 'i-lucide-users' },

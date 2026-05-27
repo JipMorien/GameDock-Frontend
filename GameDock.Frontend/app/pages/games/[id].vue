@@ -13,8 +13,20 @@ const games = [
         'A Blind Step is een horror puzzle game die speelbaar is via Unity WebGL.',
     iframeUrl: 'https://games.gamedoc.tech/a-blind-step/index.html',
     controls: [
+      'Gebruik WASD om te bewegen.',
+      'Gebruik je muis om rond te kijken.',
+      'Speel fullscreen voor de beste ervaring.',
+    ],
+  },
+  {
+    slug: 'southpark',
+    title: 'South Park',
+    description:
+        'South Park is een speelbare WebGL game binnen GameDock.',
+    iframeUrl: 'https://games.gamedoc.tech/southpark/index.html',
+    controls: [
       'Gebruik WASD of pijltjestoetsen om te bewegen.',
-      'Gebruik spatie om te springen.',
+      'Gebruik spatie voor acties of springen.',
       'Speel fullscreen voor de beste ervaring.',
     ],
   },

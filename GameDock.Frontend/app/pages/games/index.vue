@@ -16,6 +16,12 @@ const games = [
       'Speel fullscreen voor de beste ervaring.',
     ],
   },
+  {
+    slug: 'southpark',
+    title: 'South Park',
+    description: 'Speel de South Park WebGL game direct via GameDock.',
+    image: '/images/games/southpark.png',
+  },
 ]
 </script>
 
