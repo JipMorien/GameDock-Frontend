@@ -21,8 +21,24 @@ const recentGames = [
   { id: 3, score: 11200, date: 'Yesterday', result: 'win' },
 ]
 
+const gameFrame = ref<HTMLIFrameElement | null>(null)
+
 function startGame() {
   isPlaying.value = true
+
+  nextTick(() => {
+    gameFrame.value?.focus()
+  })
+}
+
+function toggleFullscreen() {
+  const iframe = gameFrame.value
+
+  if (!iframe) return
+
+  if (iframe.requestFullscreen) {
+    iframe.requestFullscreen()
+  }
 }
 </script>
 
@@ -55,11 +71,23 @@ function startGame() {
                   </UButton>
                 </div>
                 <div v-else class="w-full h-full">
-                  <iframe
-                      src="/games/unity-game/index.html"
-                      class="w-full h-full border-0"
-                      allowfullscreen
-                  />
+                  <div v-else class="relative w-full h-full overflow-hidden">
+                    <iframe
+                        ref="gameFrame"
+                        src="/games/unity-game/index.html"
+                        class="w-full h-full border-0"
+                        scrolling="no"
+                        allow="fullscreen; gamepad"
+                        allowfullscreen
+                    />
+
+                    <button
+                        class="absolute top-2 right-2 z-10 px-3 py-2 rounded bg-black/70 text-[var(--arcade-neon-cyan)] border border-[var(--arcade-neon-cyan)] font-pixel text-xs"
+                        @click="toggleFullscreen"
+                    >
+                      FULLSCREEN
+                    </button>
+                  </div>
                 </div>
               </div>
             </div>
