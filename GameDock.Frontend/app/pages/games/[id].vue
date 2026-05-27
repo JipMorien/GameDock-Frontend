@@ -12,21 +12,22 @@ const games = [
     description:
         'A Blind Step is a puzzle platformer that makes you navigate tricky situations in the dark. Can you find your way out?',
     iframeUrl: 'https://games.gamedoc.tech/a-blind-step/index.html',
-    height: '600px',
+    frameClass: 'aspect-video',
+    iframeClass: 'w-full h-full',
     controls: [
       'Use WASD to move around',
       'Use the space bar to jump',
       'Play in fullscreen for the best experience!',
     ],
   },
-
   {
     slug: 'southpark',
     title: 'South Park Go',
     description:
         'South Park Go is a fun and quirky platformer thats here to make you laugh. Can you hold your bladder?',
     iframeUrl: 'https://games.gamedoc.tech/southpark/index.html',
-    height: '750px',
+    frameClass: 'aspect-[4/3] max-h-[720px]',
+    iframeClass: 'w-full h-full',
     controls: [
       'Use WASD to move around',
       'Use the space bar to jump',
@@ -46,9 +47,7 @@ function openFullscreen() {
 
   if (!iframe) return
 
-  if (iframe.requestFullscreen) {
-    iframe.requestFullscreen()
-  }
+  iframe.requestFullscreen?.()
 }
 </script>
 
@@ -88,19 +87,22 @@ function openFullscreen() {
               />
             </div>
 
-            <div
-                class="bg-black rounded-lg overflow-hidden"
-                :style="{ height: game.height }"
-            >
-              <iframe
-                  ref="gameFrame"
-                  :src="game.iframeUrl"
-                  :title="game.title"
-                  class="w-full h-full border-0"
-                  allow="fullscreen"
-                  allowfullscreen
-                  scrolling="no"
-              />
+            <div class="w-full bg-black rounded-lg overflow-hidden flex items-center justify-center">
+              <div
+                  class="w-full bg-black"
+                  :class="game.frameClass"
+              >
+                <iframe
+                    ref="gameFrame"
+                    :src="game.iframeUrl"
+                    :title="game.title"
+                    class="border-0"
+                    :class="game.iframeClass"
+                    allow="fullscreen"
+                    allowfullscreen
+                    scrolling="no"
+                />
+              </div>
             </div>
           </UCard>
 
