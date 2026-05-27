@@ -21,7 +21,7 @@ const games = [
 ]
 
 const game = computed(() =>
-    games.find(game => game.slug === route.params.slug),
+    games.find(game => game.slug === route.params.id),
 )
 
 const gameFrame = ref<HTMLIFrameElement | null>(null)
