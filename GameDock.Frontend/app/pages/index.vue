@@ -54,13 +54,12 @@ function startGame() {
                     PRESS START
                   </UButton>
                 </div>
-                <div v-else class="w-full h-full flex items-center justify-center">
-                  <!-- This is where your WebGL canvas would be mounted -->
-                  <div class="text-center">
-                    <p class="font-pixel text-xs text-[var(--arcade-neon-cyan)] animate-pulse">LOADING GAME...</p>
-                    <p class="font-retro text-lg text-muted mt-4">WebGL canvas placeholder</p>
-                    <p class="font-retro text-sm text-muted mt-2">Connect your game here using refs or a custom component</p>
-                  </div>
+                <div v-else class="w-full h-full">
+                  <iframe
+                      src="/games/unity-game/index.html"
+                      class="w-full h-full border-0"
+                      allowfullscreen
+                  />
                 </div>
               </div>
             </div>
