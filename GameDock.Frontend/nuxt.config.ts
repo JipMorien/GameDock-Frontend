@@ -5,7 +5,7 @@ export default defineNuxtConfig({
 
   runtimeConfig: {
     public: {
-      apiBase: 'http://10.1.51.129:5000/api'
+      apiBase: 'https://api.gamedoc.tech/api'
     }
   },
 
