@@ -12,18 +12,21 @@ const games = [
     description:
         'A Blind Step is a puzzle platformer that makes you navigate tricky situations in the dark. Can you find your way out?',
     iframeUrl: 'https://games.gamedoc.tech/a-blind-step/index.html',
+    height: '600px',
     controls: [
       'Use WASD to move around',
       'Use the space bar to jump',
       'Play in fullscreen for the best experience!',
     ],
   },
+
   {
     slug: 'southpark',
     title: 'South Park Go',
     description:
-        'South Park Go is a fun and quirky platformer thats here to make you laugh. Can you hold your blatter?',
+        'South Park Go is a fun and quirky platformer thats here to make you laugh. Can you hold your bladder?',
     iframeUrl: 'https://games.gamedoc.tech/southpark/index.html',
+    height: '750px',
     controls: [
       'Use WASD to move around',
       'Use the space bar to jump',
@@ -85,7 +88,10 @@ function openFullscreen() {
               />
             </div>
 
-            <div class="bg-black rounded-lg overflow-hidden h-[600px]">
+            <div
+                class="bg-black rounded-lg overflow-hidden"
+                :style="{ height: game.height }"
+            >
               <iframe
                   ref="gameFrame"
                   :src="game.iframeUrl"
@@ -113,6 +119,7 @@ function openFullscreen() {
                     name="i-lucide-chevron-right"
                     class="text-[var(--arcade-neon-green)] mt-1"
                 />
+
                 <span>{{ control }}</span>
               </li>
             </ul>
