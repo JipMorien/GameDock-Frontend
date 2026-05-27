@@ -73,7 +73,7 @@ function openFullscreen() {
               />
             </div>
 
-            <div class="aspect-video bg-black rounded-lg overflow-hidden">
+            <div class="bg-black rounded-lg overflow-hidden h-[600px]">
               <iframe
                   ref="gameFrame"
                   :src="game.iframeUrl"
@@ -81,6 +81,7 @@ function openFullscreen() {
                   class="w-full h-full border-0"
                   allow="fullscreen"
                   allowfullscreen
+                  scrolling="no"
               />
             </div>
           </UCard>
