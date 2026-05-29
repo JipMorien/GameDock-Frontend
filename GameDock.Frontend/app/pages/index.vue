@@ -3,7 +3,6 @@ definePageMeta({
   title: 'Home',
 })
 
-const gameLoaded = ref(false)
 const isPlaying = ref(false)
 
 // Simulated player stats

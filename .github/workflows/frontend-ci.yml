@@ -15,6 +15,10 @@ jobs:
   build-and-test:
     runs-on: ubuntu-latest
 
+    defaults:
+      run:
+        working-directory: ./GameDock.Frontend
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -23,11 +27,17 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 20
+          cache: npm
+          cache-dependency-path: ./GameDock.Frontend/package-lock.json
 
       - name: Install dependencies
-        working-directory: ./GameDock.Frontend
-        run: npm install
+        run: npm ci
+
+      - name: Type check frontend
+        run: npm run typecheck
+
+      - name: Lint frontend
+        run: npm run lint
 
       - name: Build frontend
-        working-directory: ./GameDock.Frontend
         run: npm run build

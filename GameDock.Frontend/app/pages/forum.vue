@@ -226,7 +226,7 @@ async function submitReply(postId: number) {
                     </UButton>
                     <UButton
                       size="sm"
-                      :disabled="!replyState[post.id] || replyState[post.id].length > 500"
+                      :disabled="!replyState[post.id] || (replyState[post.id]?.length ?? 0) > 500"
                       class="font-pixel text-xs bg-[var(--arcade-neon-cyan)] hover:bg-[var(--arcade-neon-cyan)]/80 text-black"
                       @click="submitReply(post.id)"
                     >

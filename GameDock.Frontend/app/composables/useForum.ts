@@ -16,8 +16,9 @@ export const useForum = async () => {
         pending,
         error,
         refresh
-    } = await useAsyncData<BackendPost[]>('forum-posts', () =>
-        api('/posts')
+    } = await useAsyncData(
+        'forum-posts',
+        () => api<BackendPost[]>('/posts')
     )
 
     const posts = computed<ForumPost[]>(() => {
@@ -37,7 +38,7 @@ export const useForum = async () => {
     })
 
     async function addPost(content: string) {
-        await api('/posts', {
+        await api<BackendPost>('/posts', {
             method: 'POST',
             body: {
                 postId: 0,

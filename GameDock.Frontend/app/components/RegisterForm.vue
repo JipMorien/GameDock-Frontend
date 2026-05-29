@@ -42,7 +42,7 @@ async function onSubmit(event: FormSubmitEvent<Schema>) {
   try {
     await register(event.data.username, event.data.email, event.data.password)
     emit('success')
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error(error)
 
     errorMessage.value =

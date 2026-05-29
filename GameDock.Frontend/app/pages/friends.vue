@@ -24,13 +24,13 @@ const { user: authUser } = useAuth()
 const activeTab = ref('friends')
 const receiverUserName = ref('')
 
-function getOtherUserName(friend: any) {
+function getOtherUserName(friend: unknown) {
   return friend.senderUserId === authUser.value?.gameDockUserId
       ? friend.receiverUserName
       : friend.senderUserName
 }
 
-function getOtherUserId(friend: any) {
+function getOtherUserId(friend: unknown) {
   return friend.senderUserId === authUser.value?.gameDockUserId
       ? friend.receiverUserId
       : friend.senderUserId

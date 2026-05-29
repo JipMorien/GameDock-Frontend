@@ -8,15 +8,15 @@ interface BackendStatistic {
 
 export const useStatistics = async () => {
     const api = useApi()
-
+    
     const {
         data,
         pending,
         error,
         refresh
-    } = await useAsyncData<BackendStatistic[]>(
+    } = await useAsyncData(
         'statistics',
-        () => api('/statistics')
+        () => api<BackendStatistic[]>('/statistics')
     )
 
     const statistics = computed(() => {

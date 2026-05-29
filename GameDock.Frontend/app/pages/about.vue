@@ -35,11 +35,6 @@ const features = [
     description: 'Create your profile, showcase your achievements, and share your forum posts.',
   },
 ]
-
-const team = [
-  { name: 'Your Name', role: 'Developer', avatar: '/placeholder-user.jpg' },
-]
-
 const techStack = [
   { name: 'Vue.js', icon: 'i-simple-icons-vuedotjs', color: '#4FC08D' },
   { name: 'Nuxt', icon: 'i-simple-icons-nuxtdotjs', color: '#00DC82' },

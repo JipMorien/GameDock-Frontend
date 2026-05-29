@@ -10,8 +10,9 @@ interface BackendLeaderboard {
 export const useLeaderboard = async () => {
     const api = useApi()
 
-    const { data, pending, error } = await useAsyncData<BackendLeaderboard[]>('leaderboards', () =>
-        api('/leaderboards')
+    const { data, pending, error } = await useAsyncData(
+        'leaderboards',
+        () => api<BackendLeaderboard[]>('/leaderboards')
     )
 
     const leaderboard = computed<LeaderboardPlayer[]>(() => {

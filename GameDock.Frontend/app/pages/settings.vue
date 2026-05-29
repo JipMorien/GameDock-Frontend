@@ -34,8 +34,7 @@ const profileState = reactive({
 
 const { data: profileData, pending, error } = await useAsyncData<BackendProfile>(
     'settings-profile',
-    () => api('/profiles/me')
-)
+    () => api<BackendProfile>('/profiles/me'))
 
 if (profileData.value) {
   profileState.username = profileData.value.userName
