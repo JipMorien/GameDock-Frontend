@@ -1,0 +1,6 @@
+{
+  "devDependencies": {
+    "eslint": "^10.4.0",
+    "vue-tsc": "^3.3.2"
+  }
+}
