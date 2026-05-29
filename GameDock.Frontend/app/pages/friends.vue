@@ -3,6 +3,13 @@ definePageMeta({
   title: 'Friends',
 })
 
+interface FriendRequest {
+  senderUserId: number
+  senderUserName: string
+  receiverUserId: number
+  receiverUserName: string
+}
+
 const {
   friends,
   incomingRequests,
@@ -24,13 +31,13 @@ const { user: authUser } = useAuth()
 const activeTab = ref('friends')
 const receiverUserName = ref('')
 
-function getOtherUserName(friend: unknown) {
+function getOtherUserName(friend: FriendRequest) {
   return friend.senderUserId === authUser.value?.gameDockUserId
       ? friend.receiverUserName
       : friend.senderUserName
 }
 
-function getOtherUserId(friend: unknown) {
+function getOtherUserId(friend: FriendRequest) {
   return friend.senderUserId === authUser.value?.gameDockUserId
       ? friend.receiverUserId
       : friend.senderUserId

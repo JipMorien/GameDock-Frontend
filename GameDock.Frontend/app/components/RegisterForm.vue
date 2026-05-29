@@ -35,6 +35,23 @@ const state = reactive({
 const loading = ref(false)
 const errorMessage = ref('')
 
+function getErrorMessage(error: unknown): string {
+  if (error && typeof error === 'object') {
+    const apiError = error as {
+      data?: {
+        message?: string
+      } | string
+      message?: string
+    }
+
+    if (typeof apiError.data === 'string') return apiError.data
+    if (apiError.data?.message) return apiError.data.message
+    if (apiError.message) return apiError.message
+  }
+
+  return 'Registration failed'
+}
+
 async function onSubmit(event: FormSubmitEvent<Schema>) {
   loading.value = true
   errorMessage.value = ''
@@ -45,11 +62,7 @@ async function onSubmit(event: FormSubmitEvent<Schema>) {
   } catch (error: unknown) {
     console.error(error)
 
-    errorMessage.value =
-        error?.data?.message ||
-        error?.data ||
-        error?.message ||
-        'Register failed.'
+    errorMessage.value = getErrorMessage(error)
   } finally {
     loading.value = false
   }
