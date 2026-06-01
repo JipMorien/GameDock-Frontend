@@ -21,8 +21,10 @@ export const useForum = async () => {
         () => api<BackendPost[]>('/posts')
     )
 
-    const posts = computed<ForumPost[]>(() => {
-        return (data.value ?? []).map(post => ({
+    const posts = ref<ForumPost[]>([])
+
+    watchEffect(() => {
+        posts.value = (data.value ?? []).map(post => ({
             id: post.postId,
             author: {
                 username: `User ${post.userId}`,
@@ -50,6 +52,26 @@ export const useForum = async () => {
         })
 
         await refresh()
+    }
+
+    function addRealtimePost(post: BackendPost) {
+        const exists = posts.value.some(p => p.id === post.postId)
+
+        if (exists) return
+
+        posts.value.unshift({
+            id: post.postId,
+            author: {
+                username: `User ${post.userId}`,
+                avatar: '/placeholder-user.jpg',
+                level: 1,
+            },
+            content: post.content,
+            createdAt: new Date(post.createdAt).toLocaleString(),
+            likes: 0,
+            liked: false,
+            comments: [],
+        })
     }
 
     function addReply(postId: number, content: string) {
@@ -86,6 +108,7 @@ export const useForum = async () => {
         pending,
         error,
         addPost,
+        addRealtimePost,
         addReply,
         toggleLike,
         toggleCommentLike,

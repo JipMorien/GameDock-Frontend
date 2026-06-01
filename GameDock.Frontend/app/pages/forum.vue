@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { z } from 'zod'
 import type { FormSubmitEvent } from '@nuxt/ui'
+import { onMounted, onUnmounted } from 'vue'
 
 definePageMeta({
   title: 'Forum',
@@ -14,7 +15,12 @@ const {
   addReply,
   toggleLike,
   toggleCommentLike,
+  addRealtimePost,
 } = await useForum()
+
+const { connect, disconnect } = useForumHub((post) => {
+  addRealtimePost(post)
+})
 
 const postSchema = z.object({
   content: z.string().min(1, 'Post cannot be empty').max(500, 'Post cannot exceed 500 characters'),
@@ -62,6 +68,14 @@ async function submitReply(postId: number) {
   replyState[postId] = ''
   replyingTo.value = null
 }
+
+onMounted(async () => {
+  await connect()
+})
+
+onUnmounted(async () => {
+  await disconnect()
+})
 </script>
 
 <template>
