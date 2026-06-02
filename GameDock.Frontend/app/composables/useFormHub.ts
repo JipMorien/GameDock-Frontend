@@ -1,7 +1,15 @@
 import type { HubConnection } from '@microsoft/signalr'
 
+interface BackendPost {
+    postId: number
+    title: string
+    content: string
+    createdAt: string
+    userId: number
+}
+
 export function useForumHub(
-    onPostCreated: (post: unknown) => void,
+    onPostCreated: (post: BackendPost) => void,
 ) {
     const config = useRuntimeConfig()
 
@@ -17,7 +25,7 @@ export function useForumHub(
             .withAutomaticReconnect()
             .build()
 
-        connection.on('PostCreated', (post: unknown) => {
+        connection.on('PostCreated', (post: BackendPost) => {
             onPostCreated(post)
         })
 
