@@ -52,6 +52,20 @@ jobs:
         env:
           NUXT_PUBLIC_BASE_URL: https://api.gamedoc.tech
 
+      - name: Upload Playwright Report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-report
+          path: ./GameDock.Frontend/playwright-report/
+
+      - name: Upload Playwright Test Results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-test-results
+          path: ./GameDock.Frontend/test-results/
+
       - name: SonarQube Scan
         uses: SonarSource/sonarqube-scan-action@v6
         env:
