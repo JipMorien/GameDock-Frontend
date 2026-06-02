@@ -39,6 +39,14 @@ export const useForum = async () => {
         }))
     })
 
+    async function deletePost(postId: number) {
+        await api(`/posts/${postId}`, {
+            method: 'DELETE',
+        })
+
+        posts.value = posts.value.filter(post => post.id !== postId)
+    }
+    
     async function addPost(content: string) {
         await api<BackendPost>('/posts', {
             method: 'POST',
@@ -112,5 +120,6 @@ export const useForum = async () => {
         addReply,
         toggleLike,
         toggleCommentLike,
+        deletePost,
     }
 }

@@ -16,6 +16,7 @@ const {
   toggleLike,
   toggleCommentLike,
   addRealtimePost,
+  deletePost,
 } = await useForum()
 
 const { connect, disconnect } = useForumHub((post) => {
@@ -67,6 +68,12 @@ async function submitReply(postId: number) {
 
   replyState[postId] = ''
   replyingTo.value = null
+}
+
+async function onDeletePost(postId: number) {
+  if (!confirm('Delete this post?')) return
+
+  await deletePost(postId)
 }
 
 onMounted(async () => {
@@ -159,25 +166,44 @@ onUnmounted(async () => {
           <!-- Post Actions -->
           <div class="flex items-center gap-4 mb-4">
             <UButton
-              variant="ghost"
-              size="sm"
-              :class="post.liked ? 'text-[var(--arcade-neon-pink)]' : 'text-muted'"
-              @click="toggleLike(post)"
+                variant="ghost"
+                size="sm"
+                :class="post.liked ? 'text-[var(--arcade-neon-pink)]' : 'text-muted'"
+                @click="toggleLike(post)"
             >
-              <UIcon :name="post.liked ? 'i-lucide-heart' : 'i-lucide-heart'" class="size-4 mr-1" />
+              <UIcon
+                  :name="post.liked ? 'i-lucide-heart' : 'i-lucide-heart'"
+                  class="size-4 mr-1"
+              />
               <span class="font-retro">{{ post.likes }}</span>
             </UButton>
+
             <UButton
-              variant="ghost"
-              size="sm"
-              class="text-muted"
-              @click="replyingTo = replyingTo === post.id ? null : post.id"
+                variant="ghost"
+                size="sm"
+                class="text-muted"
+                @click="replyingTo = replyingTo === post.id ? null : post.id"
             >
-              <UIcon name="i-lucide-message-circle" class="size-4 mr-1" />
+              <UIcon
+                  name="i-lucide-message-circle"
+                  class="size-4 mr-1"
+              />
               <span class="font-retro">{{ post.comments.length }}</span>
             </UButton>
-          </div>
 
+            <UButton
+                variant="ghost"
+                size="sm"
+                class="text-red-500"
+                @click="onDeletePost(post.id)"
+            >
+              <UIcon
+                  name="i-lucide-trash-2"
+                  class="size-4 mr-1"
+              />
+              <span class="font-retro">Delete</span>
+            </UButton>
+          </div>
           <!-- Comments -->
           <div v-if="post.comments.length > 0" class="border-t border-[var(--arcade-neon-cyan)]/10 pt-4 space-y-4">
             <div
