@@ -1,9 +1,11 @@
+import type { HubConnection } from '@microsoft/signalr'
+
 export function useForumHub(
-    onPostCreated: (post: any) => void,
+    onPostCreated: (post: unknown) => void,
 ) {
     const config = useRuntimeConfig()
 
-    let connection: any = null
+    let connection: HubConnection | null = null
 
     async function connect() {
         if (!import.meta.client) return
@@ -15,7 +17,7 @@ export function useForumHub(
             .withAutomaticReconnect()
             .build()
 
-        connection.on('PostCreated', (post: any) => {
+        connection.on('PostCreated', (post: unknown) => {
             onPostCreated(post)
         })
 
