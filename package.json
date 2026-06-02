@@ -2,5 +2,9 @@
   "devDependencies": {
     "eslint": "^10.4.0",
     "vue-tsc": "^3.3.2"
+  },
+  "dependencies": {
+    "@types/ws": "^8.18.1",
+    "ws": "^8.21.0"
   }
 }
