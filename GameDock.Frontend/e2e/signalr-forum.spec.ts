@@ -43,7 +43,8 @@ test('new forum post appears in another browser without refresh through SignalR'
         'Share your thoughts, tips, or questions with the community.'
     )
 
-    await postInput.fill(postContent)
+    await postInput.click()
+    await postInput.pressSequentially(postContent)
     console.log(
         'TEXTAREA VALUE:',
         await postInput.inputValue()
