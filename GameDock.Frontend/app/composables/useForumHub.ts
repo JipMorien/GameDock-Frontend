@@ -20,17 +20,34 @@ export function useForumHub(
 
         const signalR = await import('@microsoft/signalr')
 
+        const apiBase = config.public.apiBase as string
+        const hubBase = apiBase.replace(/\/api$/, '')
+        const hubUrl = `${hubBase}/hubs/forum`
+
+       
         connection = new signalR.HubConnectionBuilder()
-            .withUrl(`${config.public.apiBase}/hubs/forum`)
+            .withUrl(hubUrl, {
+                accessTokenFactory: () => localStorage.getItem('token') ?? '',
+            })
             .withAutomaticReconnect()
             .build()
 
         connection.on('PostCreated', (post: BackendPost) => {
+           
             onPostCreated(post)
         })
 
+        connection.onreconnected(() => {
+         
+        })
+
+        connection.onclose((error) => {
+          
+        })
+
         await connection.start()
-        console.log('SignalR connected')
+
+
     }
 
     async function disconnect() {

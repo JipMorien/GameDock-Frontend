@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { z } from 'zod'
-import type { FormSubmitEvent } from '@nuxt/ui'
 import { onMounted, onUnmounted } from 'vue'
 
 definePageMeta({
@@ -29,16 +28,18 @@ const postSchema = z.object({
 
 type PostSchema = z.output<typeof postSchema>
 
-const newPostState = reactive({
-  content: '',
-})
+const newPostContent = ref('')
+
+const newPostState = computed(() => ({
+  content: newPostContent.value,
+}))
+
+const characterCount = computed(() => newPostContent.value.length)
 
 const replyState = reactive<{ [key: number]: string }>({})
 
 const isPosting = ref(false)
 const replyingTo = ref<number | null>(null)
-
-const characterCount = computed(() => newPostState.content.length)
 
 const characterCountClass = computed(() => {
   if (characterCount.value > 450) return 'text-red-500'
@@ -46,14 +47,14 @@ const characterCountClass = computed(() => {
   return 'text-muted'
 })
 
-async function onSubmitPost(event: FormSubmitEvent<PostSchema>) {
+async function onSubmitPost() {
   isPosting.value = true
 
   await new Promise(resolve => setTimeout(resolve, 500))
 
-  await addPost(event.data.content)
-  
-  newPostState.content = ''
+  await addPost(newPostContent.value)
+
+  newPostContent.value = ''
   isPosting.value = false
 }
 
@@ -99,22 +100,22 @@ onUnmounted(async () => {
         <h2 class="font-pixel text-sm text-[var(--arcade-neon-pink)] mb-4">CREATE A POST</h2>
         <UForm :schema="postSchema" :state="newPostState" @submit="onSubmitPost">
           <UFormField name="content">
-            <UTextarea
-              v-model="newPostState.content"
-              placeholder="Share your thoughts, tips, or questions with the community..."
-              :rows="4"
-              class="font-retro"
-            />
+<textarea
+    v-model="newPostContent"
+    name="content"
+    placeholder="Share your thoughts, tips, or questions with the community."
+    rows="4"
+    class="font-retro w-full rounded-md px-2.5 py-1.5 text-base bg-default"
+/>
           </UFormField>
           <div class="flex items-center justify-between mt-3">
             <span :class="['font-retro text-sm', characterCountClass]">
               {{ characterCount }}/500 characters
             </span>
             <UButton
-              type="submit"
-              :loading="isPosting"
-              :disabled="characterCount === 0 || characterCount > 500"
-              class="font-pixel text-xs bg-[var(--arcade-neon-pink)] hover:bg-[var(--arcade-neon-pink)]/80 text-white arcade-btn"
+                type="submit"
+                :loading="isPosting"
+                :disabled="!newPostContent.trim() || newPostContent.length > 500"
             >
               POST
             </UButton>
@@ -246,10 +247,10 @@ onUnmounted(async () => {
               <UAvatar src="/placeholder-user.jpg" alt="You" size="sm" />
               <div class="flex-1">
                 <UTextarea
-                  v-model="replyState[post.id]"
-                  placeholder="Write a comment..."
-                  :rows="2"
-                  class="font-retro mb-2"
+                    v-model:model-value="replyState[post.id]"
+                    placeholder="Write a comment..."
+                    :rows="2"
+                    class="font-retro mb-2"
                 />
                 <div class="flex items-center justify-between">
                   <span class="font-retro text-xs text-muted">
