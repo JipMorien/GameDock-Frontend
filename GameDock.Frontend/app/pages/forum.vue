@@ -26,7 +26,6 @@ const postSchema = z.object({
   content: z.string().min(1, 'Post cannot be empty').max(500, 'Post cannot exceed 500 characters'),
 })
 
-type PostSchema = z.output<typeof postSchema>
 
 const newPostContent = ref('')
 

@@ -41,8 +41,8 @@ export function useForumHub(
          
         })
 
-        connection.onclose((error) => {
-          
+        connection.onclose(() => {
+            
         })
 
         await connection.start()
