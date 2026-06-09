@@ -44,10 +44,20 @@ test('new forum post appears in another browser without refresh through SignalR'
     )
 
     await postInput.fill(postContent)
+    console.log(
+        'TEXTAREA VALUE:',
+        await postInput.inputValue()
+    )
+    
     await expect(postInput).toHaveValue(postContent)
     
     const postButton = pageA.getByRole('button', { name: 'POST', exact: true })
 
+    console.log(
+        'BUTTON DISABLED:',
+        await postButton.isDisabled()
+    )
+    
     await expect(postButton).toBeEnabled({
         timeout: 10000,
     })    
