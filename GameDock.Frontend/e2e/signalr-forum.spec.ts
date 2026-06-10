@@ -39,12 +39,25 @@ test('new forum post appears in another browser without refresh through SignalR'
 
     const postContent = `SignalR E2E post ${Date.now()}`
 
+    console.log(
+        'TEXTAREAS FOUND:',
+        await pageA.locator('textarea').count()
+    )
+
+    await pageA.screenshot({
+        path: 'before-fill.png',
+        fullPage: true,
+    })
+    
     const postInput = pageA.getByPlaceholder(
         'Share your thoughts, tips, or questions with the community.'
     )
 
     await postInput.click()
     await postInput.pressSequentially(postContent)
+    
+    await pageA.waitForTimeout(1500)
+    
     console.log(
         'TEXTAREA VALUE:',
         await postInput.inputValue()

@@ -99,13 +99,11 @@ onUnmounted(async () => {
         <h2 class="font-pixel text-sm text-[var(--arcade-neon-pink)] mb-4">CREATE A POST</h2>
         <UForm :schema="postSchema" :state="newPostState" @submit="onSubmitPost">
           <UFormField name="content">
-<textarea
-    v-model="newPostContent"
-    name="content"
-    placeholder="Share your thoughts, tips, or questions with the community."
-    rows="4"
-    class="font-retro w-full rounded-md px-2.5 py-1.5 text-base bg-default"
-/>
+            <UTextarea
+                v-model="newPostContent"
+                placeholder="Share your thoughts, tips, or questions with the community."
+                :rows="4"
+            />
           </UFormField>
           <div class="flex items-center justify-between mt-3">
             <span :class="['font-retro text-sm', characterCountClass]">
