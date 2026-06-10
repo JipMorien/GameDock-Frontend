@@ -10,6 +10,8 @@ on:
     branches:
       - main
       - master
+  
+  workflow_dispatch:
 
 jobs:
   build-and-test:
@@ -78,3 +80,11 @@ jobs:
             -Dsonar.projectName="GameDock Frontend"
             -Dsonar.sources=app
             -Dsonar.exclusions=**/node_modules/**,**/.nuxt/**,**/.output/**,**/dist/**,**/coverage/**
+
+      - name: OWASP ZAP Baseline Scan
+        continue-on-error: true
+        uses: zaproxy/action-baseline@v0.14.0
+        with:
+          target: 'https://gamedoc.tech'
+          cmd_options: '-a'
+          allow_issue_writing: false
